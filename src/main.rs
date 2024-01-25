@@ -24,7 +24,7 @@ struct CliArgs {
 }
 
 fn main() -> Result<(), GenerationError> {
-    let args = CliArgs::parse();
+    let mut args = CliArgs::parse();
 
     let remittance = match (args.remittance_reference, args.remittance_text) {
         (None, Some(text)) => Some(Remittance::Text(text)),
@@ -60,7 +60,9 @@ fn main() -> Result<(), GenerationError> {
         }
     };
 
-    file_name = file_name.replace(['/', '\\'], "_");
+    file_name = file_name.replace(['/', '\\', ' '], "_");
+
+    args.beneficiary_account = args.beneficiary_account.replace(' ', "");
 
     let epc_qr = EpcQr::new(args.beneficiary_name, args.beneficiary_account)
         .with_bic(args.bic)

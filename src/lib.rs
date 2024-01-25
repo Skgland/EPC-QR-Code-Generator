@@ -345,10 +345,26 @@ impl ToString for EpcQr {
             data.push('\n');
         }
 
-        if let Some(Remittance::Reference(rem) | Remittance::Text(rem)) = &self.remittance {
+        if let Some(remittance) = &self.remittance {
+            match remittance {
+                Remittance::Reference(reference) => {
+                    data.push_str(reference);
+                    if self.info.is_some(){
+                        data.push('\n');
+                     }
+                },
+                Remittance::Text(text) => {
+                    data.push('\n');
+                    data.push_str(text);
+                },
+            }
+
+        } else if self.info.is_some(){
             data.push('\n');
-            data.push_str(rem);
-        } else if let Some(info) = &self.info {
+            data.push('\n')
+        };
+
+         if let Some(info) = &self.info {
             data.push('\n');
             data.push_str(info);
         }
